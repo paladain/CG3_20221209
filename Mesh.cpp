@@ -4,6 +4,8 @@
 
 #pragma comment(lib, "d3dcompiler.lib")
 
+using namespace DirectX;
+
 /// <summary>
 /// 静的メンバ変数の実体
 /// </summary>
