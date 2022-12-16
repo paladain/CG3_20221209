@@ -8,12 +8,14 @@
 #include <vector>
 #include <wrl.h>
 
+#include <unordered_map>
+
 /// <summary>
 /// 形状データ
 /// </summary>
 class Mesh {
-  private: // エイリアス
-	// Microsoft::WRL::を省略
+private: // エイリアス
+  // Microsoft::WRL::を省略
 	template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 	// DirectX::を省略
 	using XMFLOAT2 = DirectX::XMFLOAT2;
@@ -22,30 +24,30 @@ class Mesh {
 	using XMVECTOR = DirectX::XMVECTOR;
 	using XMMATRIX = DirectX::XMMATRIX;
 
-  public: // サブクラス
-	// 頂点データ構造体（テクスチャあり）
+public: // サブクラス
+  // 頂点データ構造体（テクスチャあり）
 	struct VertexPosNormalUv {
 		XMFLOAT3 pos;    // xyz座標
 		XMFLOAT3 normal; // 法線ベクトル
 		XMFLOAT2 uv;     // uv座標
 	};
 
-  public: // 静的メンバ関数
-	/// <summary>
-	/// 静的初期化
-	/// </summary>
-	/// <param name="device">デバイス</param>
+public: // 静的メンバ関数
+  /// <summary>
+  /// 静的初期化
+  /// </summary>
+  /// <param name="device">デバイス</param>
 	static void StaticInitialize(ID3D12Device* device);
 
-  private: // 静的メンバ変数
-	// デバイス
+private: // 静的メンバ変数
+  // デバイス
 	static ID3D12Device* device;
 
-  public: // メンバ関数
-	/// <summary>
-	/// 名前を取得
-	/// </summary>
-	/// <returns>名前</returns>
+public: // メンバ関数
+  /// <summary>
+  /// 名前を取得
+  /// </summary>
+  /// <returns>名前</returns>
 	const std::string& GetName() { return name; }
 
 	/// <summary>
@@ -101,8 +103,26 @@ class Mesh {
 	/// <param name="cmdList">命令発行先コマンドリスト</param>
 	void Draw(ID3D12GraphicsCommandList* cmdList);
 
-  private: // メンバ変数
-	// 名前
+	/// <summary>
+	/// 頂点データの数を取得
+	/// </summary>
+	/// <returns>頂点データの数</returns>
+	inline size_t GetVertexCount() { return vertices.size(); }
+
+	/// <summary>
+	/// エッジ平滑化データの追加
+	/// </summary>
+	/// <param name="indexPosition">座標インデックス</param>
+	/// <param name="indexVertex">頂点インデックス</param>
+	void AddSmoothData(unsigned short indexPosition, unsigned short indexVertex);
+
+	/// <summary>
+	/// 平滑化された頂点法線の計算
+	/// </summary>
+	void CalculateSmoothedVertexNormals();
+
+private: // メンバ変数
+  // 名前
 	std::string name;
 	// 頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;
@@ -122,4 +142,7 @@ class Mesh {
 	VertexPosNormalUv* vertMap = nullptr;
 	// インデックスバッファのマップ
 	unsigned short* indexMap = nullptr;
+
+	// 頂点法線スムージング用データ
+	std::unordered_map<unsigned short, std::vector<unsigned short>>smoothData;
 };

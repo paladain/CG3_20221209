@@ -59,20 +59,24 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	// テクスチャ2番に読み込み
 	Sprite::LoadTexture(2, L"Resources/texture.png");
 
-	modelSkydome = Model::CreateFromOBJ("skydome");
+	/*modelSkydome = Model::CreateFromOBJ("skydome");
 	modelGround = Model::CreateFromOBJ("ground");
+	modelFighter = Model::CreateFromOBJ("chr_sword");*/
+
+	// 04_01にて追加
+	modelSphere = Model::CreateFromOBJ("sphere", true);
+	objSphere = Object3d::Create();
+	objSphere->SetModel(modelSphere);
+	objFighter->SetPosition({ +1, 0, 0 });
+	objSphere->SetPosition({ -1, 1, 0 });
+
+	// 05_01にて追加
 	modelFighter = Model::CreateFromOBJ("chr_sword");
 
 	objSkydome->SetModel(modelSkydome);
 	objGround->SetModel(modelGround);
 	objFighter->SetModel(modelFighter);
 
-	// 04_01にて追加
-	modelSphere = Model::CreateFromOBJ("sphere");
-	objSphere = Object3d::Create();
-	objSphere->SetModel(modelSphere);
-	objFighter->SetPosition({ +1, 0, 0 });
-	objSphere->SetPosition({ -1, 1, 0 });
 }
 
 void GameScene::Update()
