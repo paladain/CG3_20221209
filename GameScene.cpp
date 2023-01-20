@@ -20,6 +20,7 @@ GameScene::~GameScene()
 	delete modelGround;
 	delete modelFighter;
 	delete camera;
+	delete light;
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
@@ -77,11 +78,28 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	objGround->SetModel(modelGround);
 	objFighter->SetModel(modelFighter);
 
+	// 05_02にて追加
+	// ライト生成
+	light = Light::Create();
+	// ライト色を設定
+	light->SetLightColor({ 1, 1, 1 });
+	// 3Dオブジェクトにライトをセット
+	Object3d::SetLight(light);
 }
 
 void GameScene::Update()
 {
+	// 05_02にて追加
+	// オブジェクトの回転
+	{
+		XMFLOAT3 rot = objSphere->GetRotation();
+		rot.y += 1.0f;
+		objSphere->SetRotation(rot);
+		objFighter->SetRotation(rot);
+	}
+
 	camera->Update();
+	light->Update();
 
 	objSkydome->Update();
 	objGround->Update();
